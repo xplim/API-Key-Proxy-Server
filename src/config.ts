@@ -13,8 +13,19 @@ export interface Proxy extends Options {
   allowedDomains?: string[];
 }
 
+let allowedDomainsArray: string[] = [];
+try {
+  const allowedDomainsVar = JSON.parse(process.env.ALLOWED_DOMAINS || '');
+
+  if (Array.isArray(allowedDomainsVar)) {
+    allowedDomainsArray = allowedDomainsVar;
+  }
+} catch (err) {
+  console.error(err);
+}
+
 const config: Config = {
-  allowedDomains: ['https://www.mauriciorobayo.com'],
+  allowedDomains: allowedDomainsArray,
   proxies: [
     {
       route: '/weather',
