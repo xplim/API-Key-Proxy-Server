@@ -60,15 +60,13 @@ cd api-key-proxy-heroku
 heroku create
 ```
 
-### 3. Include your API keys
+### 3. Include your API keys and allowed domains
 
 Include your API keys on the Heroku app. On the dashboard go to `Settings` and lookup for the `Config Vars` section. Copy and paste your API keys there using the same variable name you are using to retrieve it on each proxy service on the [config.ts](./src/config.ts) file. For example, in the case of the [Open Weather Api proxy] that is included with the code, the variable name is `WEATHER_API_KEY`.
 
-### 4. Set up your API proxies
-
-You can include all the API services you want using the [`config.ts`](src/config.ts) file which exports an object with the following options:
-
-**allowedDomains**: An **array** of domains you want to allow to make calls to the proxy server. All the domains not listed here will be rejected with a `cors` error.
+Store the allowed domains in the variable name `ALLOWED_DOMAINS`.
+The expected value format is an **array** of domains you want to allow to make calls to the proxy server.
+All the domains not listed will be rejected with a `cors` error.
 
 **Do not include pathnames**:
 
@@ -80,11 +78,15 @@ You can include all the API services you want using the [`config.ts`](src/config
 - Wrong: `https://example.com/` ❌
 - Right: `https://example.com` ✔
 
-Example:
+Example of the value to be stored:
 
-```js
-allowedDomains: ['https://www.mauriciorobayo.com', 'https://example.com']
 ```
+["https://example-123.com", "https://example-456.com"]
+```
+
+### 4. Set up your API proxies
+
+You can include all the API services you want using the [`config.ts`](src/config.ts) file which exports an object with the following options:
 
 **proxies**: An array with the configuration options for each API service. The config file included provides configurations for [Open Weather API](https://openweathermap.org/api), the [ipinfo API](https://ipinfo.io/), and the [GitHub API](https://developer.github.com/v3/). You can remove or add as many as you need:
 
@@ -121,6 +123,7 @@ allowedDomains: ['https://www.mauriciorobayo.com', 'https://example.com']
 The following are the options for each proxy config:
 
 **allowedDomains**: You can include specific allowed domains just for a specific proxy.
+This information is retrieved from the [`ALLOWED_DOMAINS`](#3-include-your-api-keys-and-allowed-domains) environment variable.
 
 **route**: The path on the proxy server. For example, if you set it to `'/weather'`, then you will access that API service through that path on your proxy server: `https://your-proxy-server.heroku.app/weather`.
 
@@ -179,9 +182,9 @@ npm install
 
 You don't need to specify the allowed domains when testing on your local machine in the development environment. By default, all domains are whitelisted so you don't need to figure out exactly which domain and port your browser or api client uses to make requests.
 
-### 2. Provide your API keys
+### 2. Provide your API keys and allowed domains
 
-Copy the `.env.sample` file included in the root of the repo to a file named `.env` also in the root of the repo, and include your API keys there.
+Copy the `.env.sample` file included in the root of the repo to a file named `.env` also in the root of the repo, and include your API keys and allowed domains there.
 
 ### 3. Test the proxy server
 
